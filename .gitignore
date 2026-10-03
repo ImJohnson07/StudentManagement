@@ -1,0 +1,16 @@
+build/
+bin/
+target/
+.metadata/
+.recommenders/
+*.class
+*.log
+*.war
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+*.properties.local
+.env
+mai/

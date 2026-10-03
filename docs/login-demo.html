@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Student Portal Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1e2a5a;--bg2:#3b2f7a;--card:#fff;--ink:#1e2a5a;--muted:#6b7394;--accent:#ff8a3d;--line:#dfe3f3;--body:#8fd3ff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--card:#f4f6ff}}
+*{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;font-family:'Nunito',system-ui,sans-serif;background:radial-gradient(circle at 20% 10%,var(--bg2),var(--bg));display:flex;align-items:center;justify-content:center;padding:24px;color:var(--ink)}
+.stage{width:100%;max-width:380px;perspective:1200px}
+.tilt{transition:transform .15s ease-out;transform-style:preserve-3d}
+.mascot{display:block;width:170px;height:150px;margin:0 auto -34px;position:relative;z-index:2;overflow:visible}
+.flip{position:relative;height:430px;transition:transform .8s cubic-bezier(.6,.05,.2,1);transform-style:preserve-3d}
+.flip.on{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;background:var(--card);border-radius:22px;padding:48px 26px 22px;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 30px 60px rgba(0,0,0,.35)}
+.back{transform:rotateY(180deg)}
+h1{font-family:'Baloo 2',sans-serif;font-size:26px;margin:0 0 2px;text-align:center}
+p.sub{margin:0 0 14px;text-align:center;color:var(--muted);font-size:14px}
+label{display:block;font-size:13px;font-weight:600;margin:10px 0 4px}
+input{width:100%;padding:11px 12px;border:2px solid var(--line);border-radius:12px;font:inherit;color:var(--ink);background:#fff;transition:border-color .2s,transform .2s}
+input:focus{outline:none;border-color:var(--accent);transform:translateZ(0) scale(1.02)}
+button.go{width:100%;margin-top:16px;padding:12px;border:0;border-radius:12px;background:var(--accent);color:#fff;font:700 16px 'Baloo 2',sans-serif;cursor:pointer;box-shadow:0 6px 0 #d96a1f;transition:transform .1s,box-shadow .1s}
+button.go:active{transform:translateY(4px);box-shadow:0 2px 0 #d96a1f}
+button.go:focus-visible,a.sw:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+a.sw{display:block;text-align:center;margin-top:12px;font-size:14px;color:var(--ink);cursor:pointer;text-decoration:underline}
+.bar{height:6px;border-radius:6px;background:var(--line);margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:#e5484d;transition:width .3s,background .3s}
+.msg{min-height:18px;text-align:center;font-size:13px;margin-top:8px;font-weight:600}
+.shake{animation:shake .5s}
+@keyframes shake{20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+.hand{transition:transform .35s cubic-bezier(.3,1.4,.5,1)}
+.hint{color:#c9d0ff;text-align:center;font-size:12px;margin-top:14px}
+@media (prefers-reduced-motion:reduce){.flip,.hand,.tilt{transition:none}.shake{animation:none}}
+</style>
+</head>
+<body>
+<div class="stage"><div class="tilt" id="tilt">
+<svg class="mascot" id="m" viewBox="0 0 170 150" aria-hidden="true">
+<ellipse cx="85" cy="138" rx="50" ry="8" fill="rgba(0,0,0,.2)"/>
+<path d="M40 130 Q85 20 130 130Z" fill="var(--body)"/>
+<circle cx="85" cy="78" r="52" fill="var(--body)"/>
+<circle cx="52" cy="98" r="8" fill="#ffb3c1" opacity=".7"/>
+<circle cx="118" cy="98" r="8" fill="#ffb3c1" opacity=".7"/>
+<circle cx="65" cy="72" r="15" fill="#fff"/>
+<circle cx="105" cy="72" r="15" fill="#fff"/>
+<circle id="pl" cx="65" cy="72" r="7" fill="#1e2a5a"/>
+<circle id="pr" cx="105" cy="72" r="7" fill="#1e2a5a"/>
+<path id="mouth" d="M70 104 Q85 112 100 104" stroke="#1e2a5a" stroke-width="4" fill="none" stroke-linecap="round"/>
+<g id="hl" class="hand" style="transform:translateY(60px)"><ellipse cx="60" cy="72" rx="19" ry="16" fill="#5fb8f0" stroke="#1e2a5a" stroke-width="3"/></g>
+<g id="hr" class="hand" style="transform:translateY(60px)"><ellipse cx="110" cy="72" rx="19" ry="16" fill="#5fb8f0" stroke="#1e2a5a" stroke-width="3"/></g>
+</svg>
+<div class="flip" id="flip">
+<form class="face" id="login" autocomplete="off">
+<h1>Welcome back</h1>
+<p class="sub">Log in to your student portal</p>
+<label for="le">Email</label>
+<input id="le" type="email" placeholder="you@college.edu">
+<label for="lp">Password</label>
+<input id="lp" type="password" placeholder="Try: demo123">
+<div class="msg" id="lm"></div>
+<button class="go" type="submit">Log in</button>
+<a class="sw" tabindex="0" id="toS">New here? Create an account</a>
+</form>
+<form class="face back" id="signup" autocomplete="off">
+<h1>Join the class</h1>
+<p class="sub">Create your student account</p>
+<label for="sn">Full name</label>
+<input id="sn" type="text" placeholder="Johnson">
+<label for="sp">Password</label>
+<input id="sp" type="password" placeholder="Make it strong">
+<div class="bar"><i id="bar"></i></div>
+<div class="msg" id="sm"></div>
+<button class="go" type="submit">Sign up</button>
+<a class="sw" tabindex="0" id="toL">Already registered? Log in</a>
+</form>
+</div>
+</div>
+<div class="hint">Move your mouse, type, and try a wrong password</div>
+</div>
+<script>
+const $=id=>document.getElementById(id)
+const pl=$('pl'),pr=$('pr'),hl=$('hl'),hr=$('hr'),mouth=$('mouth'),m=$('m'),tilt=$('tilt')
+const mouths={smile:'M70 104 Q85 112 100 104',big:'M66 100 Q85 126 104 100Z',sad:'M70 110 Q85 98 100 110',flat:'M72 106 L98 106'}
+const setMouth=k=>mouth.setAttribute('d',mouths[k])
+const look=(dx,dy)=>{pl.setAttribute('cx',65+dx);pl.setAttribute('cy',72+dy);pr.setAttribute('cx',105+dx);pr.setAttribute('cy',72+dy)}
+const cover=on=>{hl.style.transform=hr.style.transform=on?'translateY(0)':'translateY(60px)'}
+document.addEventListener('mousemove',e=>{
+const r=m.getBoundingClientRect()
+const cx=r.left+r.width/2,cy=r.top+r.height/2
+const a=Math.atan2(e.clientY-cy,e.clientX-cx)
+const d=Math.min(6,Math.hypot(e.clientX-cx,e.clientY-cy)/40)
+look(Math.cos(a)*d,Math.sin(a)*d)
+const x=(e.clientX/innerWidth-.5)*10,y=(e.clientY/innerHeight-.5)*-10
+tilt.style.transform='rotateY('+x+'deg) rotateX('+y+'deg)'
+})
+document.querySelectorAll('input').forEach(i=>{
+i.addEventListener('focus',()=>{cover(i.type==='password');if(i.type!=='password')look(0,4)})
+i.addEventListener('blur',()=>cover(false))
+})
+const flip=$('flip')
+const go=to=>{flip.classList.toggle('on',to);setMouth('smile')}
+$('toS').onclick=()=>go(true)
+$('toL').onclick=()=>go(false)
+;['toS','toL'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter')$(id).click()}))
+$('login').addEventListener('submit',e=>{
+e.preventDefault()
+const ok=$('le').value.includes('@')&&$('lp').value==='demo123'
+const msg=$('lm')
+if(ok){setMouth('big');msg.style.color='#1a9b55';msg.textContent='Login successful! Opening dashboard...';m.animate([{transform:'translateY(0)'},{transform:'translateY(-22px)'},{transform:'translateY(0)'}],{duration:500,iterations:3})}
+else{setMouth('sad');msg.style.color='#e5484d';msg.textContent='Wrong email or password. Try demo123.';flip.classList.remove('shake');void flip.offsetWidth;flip.classList.add('shake');setTimeout(()=>setMouth('smile'),1500)}
+})
+const score=v=>{let s=0;if(v.length>=6)s++;if(v.length>=10)s++;if(/[A-Z]/.test(v)&&/[a-z]/.test(v))s++;if(/\d/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;return s}
+$('sp').addEventListener('input',e=>{
+const s=score(e.target.value),bar=$('bar')
+bar.style.width=s*20+'%'
+bar.style.background=s<=2?'#e5484d':s<=3?'#f5a623':'#1a9b55'
+setMouth(s<=1?'sad':s<=3?'flat':'big')
+$('sm').textContent=e.target.value?(s<=2?'Weak: add numbers and symbols':s<=3?'Getting there':'Strong password'):''
+})
+$('signup').addEventListener('submit',e=>{
+e.preventDefault()
+const msg=$('sm')
+msg.style.color='#1a9b55'
+msg.textContent='Account created! Please log in.'
+setMouth('big')
+m.animate([{transform:'rotate(0)'},{transform:'rotate(-8deg)'},{transform:'rotate(8deg)'},{transform:'rotate(0)'}],{duration:600,iterations:2})
+setTimeout(()=>go(false),1400)
+})
+</script>
+</body>
+</html>

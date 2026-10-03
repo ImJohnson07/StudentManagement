@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Student Dashboard Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1e2a5a;--bg2:#3b2f7a;--card:#fff;--ink:#1e2a5a;--muted:#6b7394;--accent:#ff8a3d;--line:#dfe3f3;--body:#8fd3ff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;font-family:'Nunito',system-ui,sans-serif;background:radial-gradient(circle at 20% 0%,var(--bg2),var(--bg));color:var(--ink);padding:20px;overflow-x:hidden}
+.wrap{max-width:980px;margin:0 auto}
+header{display:flex;align-items:center;gap:16px;color:#fff;margin-bottom:22px;flex-wrap:wrap}
+header svg{width:90px;height:82px;flex:none}
+header h1{font-family:'Baloo 2',sans-serif;font-size:28px;margin:0}
+header p{margin:0;color:#c9d0ff;font-size:14px}
+.sp{flex:1}
+.btn{border:0;border-radius:12px;padding:10px 16px;font:700 15px 'Baloo 2',sans-serif;cursor:pointer;background:var(--accent);color:#fff;box-shadow:0 5px 0 #d96a1f;transition:transform .1s,box-shadow .1s}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #d96a1f}
+.btn.alt{background:#fff;color:var(--ink);box-shadow:0 5px 0 #b9c0e4}
+.btn:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;perspective:900px}
+.stat{background:var(--card);border-radius:20px;padding:18px;transition:transform .2s ease-out,box-shadow .2s;box-shadow:0 14px 30px rgba(0,0,0,.25);transform-style:preserve-3d}
+.stat b{display:block;font-family:'Baloo 2',sans-serif;font-size:38px;line-height:1.1}
+.stat span{color:var(--muted);font-size:14px}
+.ico{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:22px;margin-bottom:8px;transform:translateZ(30px)}
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-top:16px}
+@media (max-width:760px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--card);border-radius:20px;padding:18px;box-shadow:0 14px 30px rgba(0,0,0,.25)}
+.panel h2{font-family:'Baloo 2',sans-serif;font-size:20px;margin:0 0 10px}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600}
+tr.row{animation:in .5s both}
+@keyframes in{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:none}}
+.pill{padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.ok{background:#d9f6e6;color:#0f7a41}
+.mid{background:#fff0d6;color:#a86400}
+.prof{text-align:center}
+.av{width:84px;height:84px;border-radius:50%;background:var(--body);margin:0 auto 8px;display:grid;place-items:center;font:700 34px 'Baloo 2',sans-serif;border:4px solid var(--accent)}
+.prof p{margin:2px 0;color:var(--muted);font-size:14px}
+.ring{width:110px;height:110px;margin:12px auto 0;display:block}
+.ring circle{fill:none;stroke-width:10;stroke-linecap:round}
+#arc{transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1)}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(340px,100%);background:#fff;padding:calc(24px + env(safe-area-inset-top,0px)) 22px 24px;transform:translateX(105%);transition:transform .5s cubic-bezier(.3,1.2,.4,1);box-shadow:-20px 0 40px rgba(0,0,0,.3);z-index:5}
+.drawer.on{transform:none}
+.drawer h2{font-family:'Baloo 2',sans-serif;margin:0 0 6px}
+label{display:block;font-size:13px;font-weight:600;margin:12px 0 4px}
+input{width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:12px;font:inherit;color:var(--ink)}
+input:focus{outline:none;border-color:var(--accent)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,120px);background:#1a9b55;color:#fff;padding:12px 20px;border-radius:14px;font-weight:600;transition:transform .4s cubic-bezier(.3,1.4,.5,1);z-index:6}
+.toast.on{transform:translate(-50%,0)}
+.wave{transform-origin:135px 110px;animation:wave 1.2s ease-in-out 3}
+@keyframes wave{0%,100%{transform:rotate(0)}25%{transform:rotate(-25deg)}75%{transform:rotate(15deg)}}
+@media (prefers-reduced-motion:reduce){.wave,tr.row{animation:none}.drawer,.toast,#arc,.stat{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<svg viewBox="0 0 170 150" aria-hidden="true">
+<ellipse cx="85" cy="138" rx="50" ry="8" fill="rgba(0,0,0,.2)"/>
+<path d="M40 130 Q85 20 130 130Z" fill="#8fd3ff"/>
+<circle cx="85" cy="78" r="52" fill="#8fd3ff"/>
+<circle cx="52" cy="98" r="8" fill="#ffb3c1" opacity=".7"/>
+<circle cx="118" cy="98" r="8" fill="#ffb3c1" opacity=".7"/>
+<circle cx="65" cy="72" r="15" fill="#fff"/>
+<circle cx="105" cy="72" r="15" fill="#fff"/>
+<circle id="pl" cx="65" cy="72" r="7" fill="#1e2a5a"/>
+<circle id="pr" cx="105" cy="72" r="7" fill="#1e2a5a"/>
+<path d="M66 100 Q85 126 104 100Z" fill="#1e2a5a"/>
+<g class="wave"><ellipse cx="140" cy="100" rx="12" ry="18" fill="#5fb8f0" stroke="#1e2a5a" stroke-width="3"/></g>
+</svg>
+<div><h1 id="hi">Hi, Johnson!</h1><p>Here is your day at a glance</p></div>
+<div class="sp"></div>
+<button class="btn alt" id="edit">Update profile</button>
+<button class="btn" id="out">Log out</button>
+</header>
+<section class="stats" id="stats">
+<div class="stat"><div class="ico" style="background:#e3f0ff">📚</div><b data-to="6">0</b><span>Courses enrolled</span></div>
+<div class="stat"><div class="ico" style="background:#d9f6e6">✅</div><b data-to="92" data-suf="%">0</b><span>Attendance</span></div>
+<div class="stat"><div class="ico" style="background:#fff0d6">🎯</div><b data-to="8.4" data-dec="1">0</b><span>Current CGPA</span></div>
+<div class="stat"><div class="ico" style="background:#ffe1e6">💰</div><b data-to="2" >0</b><span>Fee installments left</span></div>
+</section>
+<section class="grid">
+<div class="panel">
+<h2>Recent results</h2>
+<div class="scroll"><table>
+<thead><tr><th>Subject</th><th>Marks</th><th>Status</th></tr></thead>
+<tbody id="rows"></tbody>
+</table></div>
+</div>
+<div class="panel prof">
+<div class="av" id="av">J</div>
+<h2 id="nm">Johnson</h2>
+<p id="em">johnson@college.edu</p>
+<p>Course: Full Stack Java</p>
+<svg class="ring" viewBox="0 0 120 120" aria-label="Course progress 72 percent">
+<circle cx="60" cy="60" r="50" stroke="#dfe3f3"/>
+<circle id="arc" cx="60" cy="60" r="50" stroke="#ff8a3d" stroke-dasharray="314" stroke-dashoffset="314" transform="rotate(-90 60 60)"/>
+<text x="60" y="67" text-anchor="middle" font-family="Baloo 2" font-size="22" fill="#1e2a5a">72%</text>
+</svg>
+<p>Course progress</p>
+</div>
+</section>
+</div>
+<aside class="drawer" id="dr" aria-label="Update profile">
+<h2>Update profile</h2>
+<p style="margin:0;color:var(--muted);font-size:14px">Change your details and save</p>
+<label for="un">Full name</label>
+<input id="un" value="Johnson">
+<label for="ue">Email</label>
+<input id="ue" type="email" value="johnson@college.edu">
+<div style="display:flex;gap:10px;margin-top:20px">
+<button class="btn" id="save">Save changes</button>
+<button class="btn alt" id="cancel">Cancel</button>
+</div>
+</aside>
+<div class="toast" id="toast" role="status">Profile saved!</div>
+<script>
+const $=id=>document.getElementById(id)
+const data=[['Java OOPs',88,'Passed'],['SQL and MySQL',94,'Passed'],['JDBC and Servlets',81,'Passed'],['JSP',76,'Review'],['HTML and CSS',90,'Passed']]
+$('rows').innerHTML=data.map((r,i)=>'<tr class="row" style="animation-delay:'+(0.6+i*0.12)+'s"><td>'+r[0]+'</td><td>'+r[1]+'/100</td><td><span class="pill '+(r[2]==='Passed'?'ok':'mid')+'">'+r[2]+'</span></td></tr>').join('')
+document.querySelectorAll('[data-to]').forEach(el=>{
+const to=parseFloat(el.dataset.to),dec=parseInt(el.dataset.dec||0),suf=el.dataset.suf||'',t0=performance.now()
+const step=t=>{const p=Math.min(1,(t-t0)/1300),e=1-Math.pow(1-p,3);el.textContent=(to*e).toFixed(dec)+suf;if(p<1)requestAnimationFrame(step)}
+requestAnimationFrame(step)
+})
+setTimeout(()=>{$('arc').style.strokeDashoffset=314*(1-0.72)},300)
+document.querySelectorAll('.stat').forEach(c=>{
+c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform='rotateY('+x*22+'deg) rotateX('+-y*22+'deg) translateZ(14px)'})
+c.addEventListener('mouseleave',()=>{c.style.transform=''})
+})
+const pl=$('pl'),pr=$('pr')
+document.addEventListener('mousemove',e=>{
+const a=Math.atan2(e.clientY-70,e.clientX-90),d=5
+pl.setAttribute('cx',65+Math.cos(a)*d);pl.setAttribute('cy',72+Math.sin(a)*d)
+pr.setAttribute('cx',105+Math.cos(a)*d);pr.setAttribute('cy',72+Math.sin(a)*d)
+})
+const dr=$('dr'),toast=$('toast')
+$('edit').onclick=()=>dr.classList.add('on')
+$('cancel').onclick=()=>dr.classList.remove('on')
+$('save').onclick=()=>{
+const n=$('un').value.trim()||'Student'
+$('nm').textContent=n
+$('hi').textContent='Hi, '+n+'!'
+$('em').textContent=$('ue').value
+$('av').textContent=n[0].toUpperCase()
+dr.classList.remove('on')
+toast.classList.add('on')
+setTimeout(()=>toast.classList.remove('on'),2200)
+}
+$('out').onclick=()=>{toast.textContent='Logged out (demo)';toast.classList.add('on');setTimeout(()=>toast.classList.remove('on'),2000)}
+</script>
+</body>
+</html>
